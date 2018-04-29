@@ -8,7 +8,6 @@ module MxV
 	input reset,
 	input [63:0] vector,
 	input [WORD_LENGTH-1:0] FIFOvalue,
-	input FIFOpush,
 	input [WORD_LENGTH-1:0] Matrix_length
 );
 
