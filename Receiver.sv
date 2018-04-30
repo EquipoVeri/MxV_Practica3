@@ -18,6 +18,8 @@ bit interrupt_bit;
 
 wire [WORD_LENGTH-1:0] ReceivedData_w;
 wire [WORD_LENGTH-1:0] Data_w;
+wire [WORD_LENGTH-1:0] Byte_w;
+
 
 
 UART Uart
@@ -37,8 +39,39 @@ UART Uart
 
 Error_RX Error(
 	.DataInput(ReceivedData_w),
-	.DataOutput(Data_w),
+	.DataOutput(Byte_w),
 	.error(error_bit)
+);
+
+Data_RX (
+	.clk(clk), 
+	.reset(reset),
+	.interrupt(interrupt_bit),
+	.error(error_bit)
+	.DataInput(Byte_w),
+
+	
+	//OUTPUTS
+	output logic data_flag,
+	output logic clear_interrupt,
+	.DataOutput(Data_w)
+);
+
+CounterWithFunction_With_Sync_Reset
+#(	
+	.WORD_LENGTH(WORD_LENGTH)
+)
+counter_error
+(	
+	.clk(clk), 
+	.reset(reset),
+	input enable,
+	input Sync_Reset,
+	input [WORD_LENGTH-1:0] command_lenght,
+	
+	// Output Ports
+	output [WORD_LENGTH-1:0] CountOut,
+	output finish_count 
 );
 
 FIFO 
@@ -52,7 +85,7 @@ FIFOTA
 	.pop(),
 	.push(),
 	.Depth_of_FIFO(Matrix_length*Matrix_length),
-	.DataInput(Data_Input),
+	.DataInput(Data_w),
 	.full(),
 	.empty(),
 	.DataOutput()
@@ -72,7 +105,7 @@ counterFIFOTA
 	
 	// Output Ports
 	output [WORD_LENGTH-1:0] CountOut,
-	.finish_command(finish_command_bit)
+	.finish_count(finish_command_bit)
 );
 
 Load_M_V

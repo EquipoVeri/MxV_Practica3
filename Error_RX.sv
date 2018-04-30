@@ -46,10 +46,8 @@ begin
 		F:
 			DataOutput = 8'hF;
 			
-		default: begin
+		default:
 			error 	  = 1'b1;
-			DataOutput = 8'hFF;
-		end
 	endcase
 end
 

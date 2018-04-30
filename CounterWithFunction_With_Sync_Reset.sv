@@ -9,7 +9,7 @@ module CounterWithFunction_With_Sync_Reset
 	
 	// Output Ports
 	output [WORD_LENGTH-1:0] CountOut,
-	output finish_command 
+	output finish_count 
 );
 
 logic [WORD_LENGTH-1 : 0] Count_logic;
@@ -42,7 +42,7 @@ always_comb begin
 end
 		
 //---------------------------------------------------------------------------------------------
-assign finish_command = MaxValue_Bit;
+assign finish_count = MaxValue_Bit;
 assign CountOut = Count_logic;
 //----------------------------------------------------------------------------------------------
 
