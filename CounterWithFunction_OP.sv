@@ -1,7 +1,7 @@
-module CounterWithFunction_M_V
+module CounterWithFunction_OP
 #(
 	// Parameter Declarations
-	parameter MAXIMUM_VALUE = 8,
+	parameter MAXIMUM_VALUE = 20,
 	parameter NBITS_FOR_COUNTER = CeilLog2(MAXIMUM_VALUE)
 )
 (
@@ -9,81 +9,63 @@ module CounterWithFunction_M_V
 	input clk,
 	input reset,
 	input enable,
+	input [31:0] matrixSize_real,
 	input [31:0] matrixSize,
 	
 	// Output Ports
-	output push1, push2, push3, push4,
-	output mux0_flag
+	output op_in_process,
+	output endop,
+	output mux_flag,
+	output result_push
 );
 
-bit push1_bit, push2_bit, push3_bit, push4_bit, mux0_bit;
+bit endop_bit, mux_bit, op_in_process_bit, result_push_bit;
 
+logic [31:0] result_size_log = 32'd4; 
+ 
 logic [NBITS_FOR_COUNTER-1 : 0] Count_logic;
 
 always_ff@(posedge clk or negedge reset) begin
-	if (reset == 1'b0)
+	if (reset == 1'b0) begin
 		Count_logic <= {NBITS_FOR_COUNTER{1'b0}};
+		mux_bit = 1'b1;
+	end
 	else begin
 			if(enable == 1'b1)
-				if(Count_logic == MAXIMUM_VALUE - 1)
+				if(Count_logic == matrixSize) begin
 					Count_logic <= 0;
-				else
+					mux_bit <= 1'b1;
+				end
+				else begin
 					Count_logic <= Count_logic + 1'b1;
+					mux_bit <= ~mux_bit;
+				end
 	end
 end
 
 //--------------------------------------------------------------------------------------------
 
 always_comb begin
-	if(Count_logic == 4'd0 || Count_logic == 4'd4)begin 
-		push1_bit = 1'b0; 
-		push2_bit = 1'b0;
-		push3_bit = 1'b0;
-		push4_bit = 1'b1;
+	if(Count_logic >= result_size_log)
+		result_push_bit = 1'b1;
+	else
+		result_push_bit = 1'b0;
+	
+	if (Count_logic >= matrixSize) begin
+		endop_bit = 1'b1;
+		op_in_process_bit = 1'b0;
 	end
 	
-	else if (Count_logic == 4'd1 || Count_logic == 4'd5)begin
-		push1_bit = 1'b0;
-		push2_bit = 1'b0;
-		push3_bit = 1'b1;
-		push4_bit = 1'b0;
-	end 
-	
-	else if (Count_logic == 4'd2 || Count_logic == 4'd6) begin
-		push1_bit = 1'b0;
-		push2_bit = 1'b1;
-		push3_bit = 1'b0;
-		push4_bit = 1'b0;	
-	end 
-	
-	else if (Count_logic == 4'd3 || Count_logic == 4'd7) begin
-		push1_bit = 1'b1;
-		push2_bit = 1'b0;
-		push3_bit = 1'b0;
-		push4_bit = 1'b0;	
-	end 
-	
-	else begin
-		push1_bit = 1'b0;
-		push2_bit = 1'b0;
-		push3_bit = 1'b0;
-		push4_bit = 1'b0;
-	end 
-	
-	if (Count_logic >= matrixSize)
-		mux0_bit = 1'b1;
-	
 	else 
-		mux0_bit = 1'b0;
-	
+		endop_bit = 1'b0;
+		op_in_process_bit = 1'b1;
 end
 		
 //---------------------------------------------------------------------------------------------
-assign push1 = push1_bit;
-assign push2 = push2_bit;
-assign push3 = push3_bit;
-assign push4 = push4_bit;
-assign mux0_flag = mux0_bit;
+assign mux_flag = mux_bit;
+assign endop = endop_bit;
+assign op_in_process = op_in_process_bit;
+assign result_push = result_push_bit;
 //----------------------------------------------------------------------------------------------
 
 /*--------------------------------------------------------------------*/

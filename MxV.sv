@@ -6,10 +6,11 @@ module MxV
 (
 	input clk,
 	input reset,
+	input start,
 	input [63:0] vector,
 	input [WORD_LENGTH-1:0] FIFOvalue,
 	input FIFOpush,
-	input [WORD_LENGTH-1:0] Matrix_length
+	input [31:0] Matrix_length
 );
 
 bit pop1_bit;
@@ -59,9 +60,48 @@ wire [WORD_LENGTH-1:0] outputreg4_w;
 bit enable_muxV_bit;
 bit enable_mux_feedback_bit;
 bit enable_mux0flag_bit;
+bit start_load_bit;
+bit enable_op_bit;
+bit endop_bit;
+bit op_bit;
 
 
 //------------- CONTROL -------------------------------------------------//
+
+CounterWithFunction_OP counter_op
+(
+	// Input Ports
+	.clk(clk),
+	.reset(reset),
+	.enable(enable_op_bit),
+	.matrixSize_real(Matrix_length),
+	.matrixSize(2*Matrix_length + 3'b100),
+	
+	// Output Ports
+	.op_in_process(op_bit),
+	.endop(endop_bit),
+	.mux_flag(enable_muxV_bit),
+	.result_push(pushresult_bit)
+);
+
+FSM_MxV_Control controlMxV
+(
+	// Input Ports
+	.clk(clk),
+	.reset(reset),
+	.StartLoad(start),
+	.EndLoad((full_FIFO1_bit & full_FIFO2_bit & full_FIFO3_bit & full_FIFO4_bit)),
+	.EndOp(endop_bit),
+	.Op(op_bit),
+	// Output Ports
+	.enable_counter(start_load_bit),
+	.op_in_process(enable_op_bit),
+	.pop_1(pop1_bit),
+	.pop_2(pop2_bit),
+	.pop_3(pop3_bit),
+	.pop_4(pop4_bit)
+);
+
 
 //------------- LOAD FIFO -----------------------------------------------//
 
@@ -75,7 +115,7 @@ counterLOAD_FIFO
 	// Input Ports
 	.clk(clk),
 	.reset(reset),
-	.enable(~(full_FIFO1_bit & full_FIFO2_bit & full_FIFO3_bit & full_FIFO4_bit)),
+	.enable(start_load_bit),
 	.matrixSize(Matrix_length),
 	
 	// Output Ports
@@ -85,6 +125,8 @@ counterLOAD_FIFO
 	.push4(push4_bit),
 	.mux0_flag(enable_mux0flag_bit)
 );
+
+
 
 Multiplexer2to1
 #(
@@ -121,7 +163,7 @@ FIFOMxV1
 	.clk(clk), 
 	.reset(reset),
 	.pop(pop1_bit),
-	.push(push1_bit),
+	.push(push1_bit & start_load_bit),
 	.Depth_of_FIFO(2*Matrix_length),
 	.DataInput(InputFIFOs_w),
 	.full(full_FIFO1_bit),
@@ -182,7 +224,7 @@ FIFOMxV2
 	.clk(clk), 
 	.reset(reset),
 	.pop(pop2_bit),
-	.push(push2_bit),
+	.push(push2_bit & start_load_bit),
 	.Depth_of_FIFO(2*Matrix_length),
 	.DataInput(InputFIFOs_w),
 	.full(full_FIFO2_bit),
@@ -245,7 +287,7 @@ FIFOMxV3
 	.clk(clk), 
 	.reset(reset),
 	.pop(pop3_bit),
-	.push(push3_bit),
+	.push(push3_bit & start_load_bit),
 	.Depth_of_FIFO(2*Matrix_length),
 	.DataInput(InputFIFOs_w),
 	.full(full_FIFO3_bit),
@@ -308,7 +350,7 @@ FIFOMxV4
 	.clk(clk), 
 	.reset(reset),
 	.pop(pop4_bit),
-	.push(push4_bit),
+	.push(push4_bit & start_load_bit),
 	.Depth_of_FIFO(2*Matrix_length),
 	.DataInput(InputFIFOs_w),
 	.full(full_FIFO4_bit),
@@ -341,7 +383,7 @@ RegMxV4
 	// Input Ports
 	.clk(clk),
 	.reset(reset),
-	.Data_Input(inputreg1_w),
+	.Data_Input(inputreg4_w),
 
 	// Output Ports
 	.Data_Output(outputreg4_w)
@@ -355,9 +397,9 @@ Multiplexer2to1
 )
 MUX_FEEDBACK
 (
-	.Selector(enable_mux_feedback_bit),
+	.Selector(enable_muxV_bit),
 	.MUX_Data0(8'd0),
-	.MUX_Data1(outputreg1_w),
+	.MUX_Data1(outputreg4_w),
 	.MUX_Output(muxout_feedback_w)
 );
 
@@ -370,9 +412,9 @@ FIFOMxVResult
 	.clk(clk), 
 	.reset(reset),
 	.pop(popresult_bit),
-	.push(pushresult_bit),
+	.push(pushresult_bit & ~enable_muxV_bit),
 	.Depth_of_FIFO(Matrix_length),
-	.DataInput(inputreg1_w),
+	.DataInput(outputreg4_w),
 	.full(),
 	.empty(),
 	.DataOutput(dataoutFIFOResult_w)

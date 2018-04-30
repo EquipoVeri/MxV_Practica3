@@ -10,10 +10,11 @@ parameter WORD_LENGTH = 8;
 // Input Ports
 bit clk;
 bit reset;
+bit start;
 bit [63:0] vector;
 bit [WORD_LENGTH-1:0] FIFOvalue;
 bit FIFOpush;
-bit [WORD_LENGTH-1:0] Matrix_length;
+bit [31:0] Matrix_length;
 
 // Output Ports
 
@@ -30,6 +31,7 @@ DUV
 	// Input Ports
 	.clk(clk),
 	.reset(reset),
+	.start(start),
 	.vector(vector),
 	.FIFOvalue(FIFOvalue),
 	.FIFOpush(FIFOpush),
@@ -43,64 +45,153 @@ DUV
 /******************** Stimulus *************************/
 initial // Clock generator
   begin
-    clk = 1'b0;
     forever #2 clk = !clk;
   end
 /*----------------------------------------------------------------------------------------*/
 initial begin /*Reset*/
 	# 0 reset = 1'b0;
-	#0 
-	#3 reset = 1'b1;
+	//# 0 vector = 64'b0000011100000110000001010000010000000011000000100000000100000000;	//8x8
+	//# 0 vector = 64'b0000000000000000000000000000010000000011000000100000000100000000;	//5x5
+	# 0 vector = 64'b0000000000000000000000000000000000000000000000100000000100000000;
+	#0 Matrix_length = 3;
+	#2 reset = 1'b1;
+	#4 start = 1'b1;
+	#4 start = 1'b0;
 end
 /*----------------------------------------------------------------------------------------*/
-initial begin 
-	# 0 pop  = 1'b0;
-	# 80 pop  = 1'b1;
-	# 4 pop  = 1'b1;
-	# 4 pop  = 1'b1;
-	# 4 pop  = 1'b1;
-	# 4 pop  = 1'b0;
-	# 4 pop  = 1'b1;
-	# 4 pop  = 1'b0;
-	# 4 pop  = 1'b1;
-	# 4 pop  = 1'b0;
-	# 4 pop  = 1'b1;
-	# 4 pop  = 1'b0;
-	# 4 pop  = 1'b1;
-	# 4 pop  = 1'b0;
-end 
-/*----------------------------------------------------------------------------------------*/
-initial begin 
-	# 0  push = 0;
-	# 10  push = 1'b1;
-	# 4  push = 1'b1;
-	# 4  push = 1'b1;
-	# 4  push = 1'b1;
-	# 4  push = 0;
-	# 4  push = 1'b1;
-	# 4  push = 0;
-	# 4  push = 1'b1;
-	# 4  push = 0;
-	# 4  push = 1'b1;
-	# 4  push = 0;
-	# 4  push = 1'b1;
-	# 4  push = 0;
-end
+
 /*----------------------------------------------------------------------------------------*/ 
 initial begin
-	# 0  DataInput = 1'b0;
-	# 8  DataInput = 8;
-	# 4  DataInput = 7;
-	# 4  DataInput = 6;
-	# 4  DataInput = 5;
-	# 4  DataInput = 0;
-	# 4  DataInput = 4;
-	# 4  DataInput = 0;
-	# 4  DataInput = 3;
-	# 4  DataInput = 0;
-	# 4  DataInput = 2;
-	# 4  DataInput = 0;
-	# 4  DataInput = 1;
+	# 0  FIFOvalue = 1'b0;
+	# 10  FIFOvalue = 0;
+	# 4  FIFOvalue = 1;
+	# 4  FIFOvalue = 2;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 3;
+	# 4  FIFOvalue = 4;
+	# 4  FIFOvalue = 5;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;			//3x3
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 6;
+	# 4  FIFOvalue = 7;
+	# 4  FIFOvalue = 8;
+	# 4  FIFOvalue = 0;					
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	/*# 10  FIFOvalue = 0;
+	# 4  FIFOvalue = 1;
+	# 4  FIFOvalue = 2;
+	# 4  FIFOvalue = 3;
+	# 4  FIFOvalue = 4;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 5;
+	# 4  FIFOvalue = 6;
+	# 4  FIFOvalue = 7;
+	# 4  FIFOvalue = 8;
+	# 4  FIFOvalue = 9;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 10;
+	# 4  FIFOvalue = 11;
+	# 4  FIFOvalue = 12;
+	# 4  FIFOvalue = 13;					//5x5
+	# 4  FIFOvalue = 14;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 15;
+	# 4  FIFOvalue = 16;
+	# 4  FIFOvalue = 17;
+	# 4  FIFOvalue = 18;
+	# 4  FIFOvalue = 19;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 1;
+	# 4  FIFOvalue = 2;
+	# 4  FIFOvalue = 3;
+	# 4  FIFOvalue = 4;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 0;*/
+/*	# 10  FIFOvalue = 0;
+	# 4  FIFOvalue = 1;
+	# 4  FIFOvalue = 2;
+	# 4  FIFOvalue = 3;
+	# 4  FIFOvalue = 4;
+	# 4  FIFOvalue = 5;
+	# 4  FIFOvalue = 6;
+	# 4  FIFOvalue = 7;
+	# 4  FIFOvalue = 8;
+	# 4  FIFOvalue = 9;
+	# 4  FIFOvalue = 10;
+	# 4  FIFOvalue = 11;
+	# 4  FIFOvalue = 12;
+	# 4  FIFOvalue = 13;
+	# 4  FIFOvalue = 14;
+	# 4  FIFOvalue = 15;
+	# 4  FIFOvalue = 16;
+	# 4  FIFOvalue = 17;
+	# 4  FIFOvalue = 18;
+	# 4  FIFOvalue = 19;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 1;
+	# 4  FIFOvalue = 2;
+	# 4  FIFOvalue = 3;
+	# 4  FIFOvalue = 4;
+	# 4  FIFOvalue = 1;
+	# 4  FIFOvalue = 3;
+	# 4  FIFOvalue = 8;
+	# 4  FIFOvalue = 0;
+	# 4  FIFOvalue = 11;
+	# 4  FIFOvalue = -5;
+	# 4  FIFOvalue = 2;
+	# 4  FIFOvalue = 1;
+	# 4  FIFOvalue = 3;
+	# 4  FIFOvalue = 10;
+	# 4  FIFOvalue = -9;
+	# 4  FIFOvalue = 1;
+	# 4  FIFOvalue = 2;
+	# 4  FIFOvalue = 3;
+	# 4  FIFOvalue = 4;
+	# 4  FIFOvalue = 5;
+	# 4  FIFOvalue = 6;
+	# 4  FIFOvalue = 7;				//8x8
+	# 4  FIFOvalue = 8;
+	# 4  FIFOvalue = 9;
+	# 4  FIFOvalue = 1;
+	# 4  FIFOvalue = 2;
+	# 4  FIFOvalue = 3;
+	# 4  FIFOvalue = 4;
+	# 4  FIFOvalue = 1;
+	# 4  FIFOvalue = 2;
+	# 4  FIFOvalue = 3;
+	# 4  FIFOvalue = 4;
+	# 4  FIFOvalue = 5;
+	# 4  FIFOvalue = 6;
+	# 4  FIFOvalue = 7;
+	# 4  FIFOvalue = 8;
+	# 4  FIFOvalue = 9;
+	# 4  FIFOvalue = 12;
+	# 4  FIFOvalue = -2;
+	# 4  FIFOvalue = -2;
+	# 4  FIFOvalue = -1;
+	# 4  FIFOvalue = -3;
+	# 4  FIFOvalue = -1;*/
+	
 end
 
 endmodule
