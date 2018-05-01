@@ -36,9 +36,9 @@ end
 
 always_comb begin
 	if(Count_logic == command_lenght-1)
-		MaxValue_Bit = 1; 
+		MaxValue_Bit = 1'b1; 
 	else
-		MaxValue_Bit = 0;
+		MaxValue_Bit = 1'b0;
 end
 		
 //---------------------------------------------------------------------------------------------

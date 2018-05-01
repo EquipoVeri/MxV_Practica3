@@ -4,6 +4,7 @@ module Load_M_V
 	input clk,
 	input reset,
 	input interrupt,
+	input data_ready,
 	input finish_command,
 	input [Word_Length-1:0] Data_Input,
 	
@@ -19,12 +20,11 @@ localparam INIT_BYTE 	= 8'hFE;
 localparam STOP_BYTE 	= 8'hEF;
 
 enum logic [2:0] {MATRIX_SIZE, RESEND_RESULT, INIT_CAPTURE, DATA_CAPTURE} command;
-enum logic [3:0] {IDLE, START, LENGHT, CMD, SIZE, MATRIX, VECTOR} state;
+enum logic [3:0] {IDLE, START, LENGHT, CMD, SIZE, MATRIX, VECTOR, ERROR, END} state;
 
-bit start_flag;
 logic [Word_Length:0] lenght_command;
 logic [Word_Length:0] instruction;
-logic [Word_Length:0] lenght;
+logic [Word_Length:0] lenght_matrix;
 
 // ---------------------------------------------------------------------------------------
 /*State assign, secuential process*/
@@ -34,7 +34,6 @@ begin
 	if(reset == 1'b0) 
 		begin
 			state <= IDLE;
-			start_flag <= 1'b0;
 		end
 	else begin
 		case(state)
@@ -46,36 +45,72 @@ begin
 					state <= IDLE;
 							
 			START:
-				if(Data_Input == INIT_BYTE) 
+				if(data_ready == 1'b1)
 					begin
-						state <= LENGHT;
-						start_flag <= 1'b1;		
+						if(Data_Input == INIT_BYTE) 
+							state <= LENGHT;
+						else
+							state <= ERROR;
 					end
 				else
 					state <= START;		
 					
 			LENGHT: 
-				begin
-					state <= CMD;
-					lenght_command = Data_Input;
-				end
-				
+				if(data_ready == 1'b1)
+					begin
+						state <= CMD;
+						lenght_command <= Data_Input;
+					end
+				else
+					state <= LENGHT;	
+					
 			CMD:
-				begin
-					instruction = Data_Input;
-					if(finish_command == 1'b1)
-						begin
-							if(instruction == MATRIX_SIZE)
-								
-							
-						end
-				end
+				if(data_ready == 1'b1 && finish_command == 1'b1)
+					begin
+						state <= END;
+						instruction <= Data_Input;
+					end
+				else if(data_ready == 1'b1 && finish_command == 1'b0)
+					begin
+						instruction <= Data_Input;
+						if(instruction == MATRIX_SIZE)
+							state <= SIZE;
+						if(instruction == INIT_CAPTURE && lenght_command == (lenght_matrix*lenght_matrix + 2))
+							state <= MATRIX;
+						if(instruction == INIT_CAPTURE && lenght_command == (lenght_matrix*lenght_matrix + 2))
+							state <= MATRIX;
+					end
+				else 
+					state <= CMD;
 			
 			SIZE: 
+				if(data_ready == 1'b1 && finish_command == 1'b1)
+					begin
+						state <= END;
+						lenght_matrix <= Data_Input;
+					end
+				else if(lenght_command != 4'd3)
+					state <= ERROR;
+				else
+					state <= SIZE;	
 			
 			MATRIX: 
+				if(data_ready == 1'b1 && finish_command == 1'b1)
+					state <= END;
+				else if(lenght_command != (lenght_matrix*lenght_matrix + 2))
+					state <= ERROR;
+				else
+					state <= MATRIX;	
 			
 			VECTOR:
+				if(data_ready == 1'b1 && finish_command == 1'b1)
+					state <= END;
+				else if(lenght_command != (lenght_matrix + 2))
+					state <= ERROR;
+				else
+					state <= VECTOR;	
+			
+			END:
 			
 			default: begin
 			

@@ -15,6 +15,8 @@ bit finish_command_bit;
 bit command_lenght_bit;
 bit error_bit;
 bit interrupt_bit;
+bit clearInterrupt_bit;
+bit data_ready_bit;
 
 wire [WORD_LENGTH-1:0] ReceivedData_w;
 wire [WORD_LENGTH-1:0] Data_w;
@@ -29,7 +31,7 @@ UART Uart
     input reset,
     input Transmit,
     input clk,
-	 input ClearInterrupt,
+	 .ClearInterrupt(clearInterrupt_bit),
     .RxInterrupt(interrupt_bit),
 	 output ParityError,
 	 output SerialOutputTx,
@@ -52,11 +54,33 @@ Data_RX (
 
 	
 	//OUTPUTS
-	output logic data_flag,
-	output logic clear_interrupt,
+	.data_flag(data_ready_bit),
+	.clear_interrupt(clearInterrupt_bit),
 	.DataOutput(Data_w)
 );
 
+
+Load_M_V
+#(
+	.Word_Length(WORD_LENGTH)
+)
+load_M_V
+(
+	.clk(clk), 
+	.reset(reset),
+	.interrupt(interrupt_bit),
+	.data_ready(data_ready_bit),
+	.finish_command(finish_command_bit),
+	input [Word_Length-1:0] Data_Input,
+	
+// Output Ports
+	output [WORD_LENGTH-1:0] FIFOvalue,
+	output [8*Word_Length-1:0] Vector,
+	output [WORD_LENGTH-1:0] Matrix_length,
+	.command_lenght(command_lenght_bit)
+);
+
+/*
 CounterWithFunction_With_Sync_Reset
 #(	
 	.WORD_LENGTH(WORD_LENGTH)
@@ -73,6 +97,7 @@ counter_error
 	output [WORD_LENGTH-1:0] CountOut,
 	output finish_count 
 );
+*/
 
 FIFO 
 #(
@@ -95,7 +120,7 @@ CounterWithFunction_With_Sync_Reset
 #(	
 	.WORD_LENGTH(WORD_LENGTH)
 )
-counterFIFOTA
+counter_Lenght_Command
 (
 	.clk(clk), 
 	.reset(reset),
@@ -106,25 +131,6 @@ counterFIFOTA
 	// Output Ports
 	output [WORD_LENGTH-1:0] CountOut,
 	.finish_count(finish_command_bit)
-);
-
-Load_M_V
-#(
-	.Word_Length(WORD_LENGTH)
-)
-load_M_V
-(
-	.clk(clk), 
-	.reset(reset),
-	.interrupt(interrupt_bit),
-	.finish_command(finish_command_bit),
-	input [Word_Length-1:0] Data_Input,
-	
-// Output Ports
-	output [WORD_LENGTH-1:0] FIFOvalue,
-	output [8*Word_Length-1:0] Vector,
-	output [WORD_LENGTH-1:0] Matrix_length,
-	.command_lenght(command_lenght_bit)
 );
 
 endmodule 
