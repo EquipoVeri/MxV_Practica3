@@ -10,14 +10,16 @@ module MxV
 	input [63:0] vector,
 	input [WORD_LENGTH-1:0] FIFOvalue,
 	input FIFOpush,
-	input [31:0] Matrix_length
+	input [31:0] Matrix_length,
+	output transmit,
+	output [WORD_LENGTH-1:0] results
 );
+
 
 bit pop1_bit;
 bit pop2_bit;
 bit pop3_bit;
 bit pop4_bit;
-bit popresult_bit;
 
 bit push1_bit;
 bit push2_bit;
@@ -64,6 +66,12 @@ bit start_load_bit;
 bit enable_op_bit;
 bit endop_bit;
 bit op_bit;
+bit endresult_b;
+bit transmit_b;
+
+
+assign results = dataoutFIFOResult_w;
+assign transmit = transmit_b & ~endresult_b;
 
 
 //------------- CONTROL -------------------------------------------------//
@@ -92,6 +100,7 @@ FSM_MxV_Control controlMxV
 	.StartLoad(start),
 	.EndLoad((full_FIFO1_bit & full_FIFO2_bit & full_FIFO3_bit & full_FIFO4_bit)),
 	.EndOp(endop_bit),
+	.EndTxResults(endresult_b),
 	.Op(op_bit),
 	// Output Ports
 	.enable_counter(start_load_bit),
@@ -99,7 +108,8 @@ FSM_MxV_Control controlMxV
 	.pop_1(pop1_bit),
 	.pop_2(pop2_bit),
 	.pop_3(pop3_bit),
-	.pop_4(pop4_bit)
+	.pop_4(pop4_bit),
+	.transmit(transmit_b)
 );
 
 
@@ -411,12 +421,12 @@ FIFOMxVResult
 (
 	.clk(clk), 
 	.reset(reset),
-	.pop(popresult_bit),
+	.pop(transmit_b),
 	.push(pushresult_bit & ~enable_muxV_bit),
 	.Depth_of_FIFO(Matrix_length),
 	.DataInput(outputreg4_w),
 	.full(),
-	.empty(),
+	.empty(endresult_b),
 	.DataOutput(dataoutFIFOResult_w)
 );
 

@@ -79,7 +79,7 @@ always_comb begin
 	else
 		MaxValue_Bit = 0;
 		
-	if ((Count_elements == 0) && (Count_read == 0))
+	if ((Count_elements == 0) && (Count_read == MAXIMUM_VALUE))
 		Zero_Bit = 1;
 	else
 		Zero_Bit = 0;
