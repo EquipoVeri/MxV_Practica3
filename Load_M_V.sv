@@ -6,7 +6,6 @@ module Load_M_V
 	input interrupt,
 	input data_ready,
 	input finish_count,
-	input full_Matrix,
 	input [Word_Length-1:0] Data_Input,
 	
 // Output Ports
@@ -26,7 +25,7 @@ module Load_M_V
 localparam INIT_BYTE = 8'hFE;
 localparam STOP_BYTE = 8'hEF;
 
-enum logic [2:0] {MATRIX_SIZE, RESEND_RESULT, INIT_CAPTURE, DATA_CAPTURE} command;
+enum logic [2:0] {INIT, MATRIX_SIZE, RESEND_RESULT, INIT_CAPTURE, DATA_CAPTURE} command;
 enum logic [3:0] {IDLE, START, LENGHT, CMD, SIZE, SEND, CAPTURE, MATRIX, VECTOR, ERROR, END, STOP} state;
 
 logic [Word_Length-1:0] lenght_command;
@@ -44,6 +43,7 @@ bit send_result_bit;
 bit enable_size_bit;
 bit clear_vector_bit;
 
+bit flag_Matrix_Vector_b;
 /*------------------------------------------------------------------------------------------*/
 /*Asignacion de estado*/
 
@@ -58,48 +58,50 @@ begin
 		
 			IDLE: 
 				if(interrupt == 1'b1)
-					state <= START;
+					if(Data_Input == INIT_BYTE) 
+						state <= START;
+					else
+						state <= ERROR;
 				else
 					state <= IDLE;
 							
 			START:
-				if(data_ready == 1'b1)
-					begin
-						if(Data_Input == INIT_BYTE) 
-							state <= LENGHT;
-						else
-							state <= ERROR;
-					end
+				if(interrupt == 1'b1)begin
+					state <= LENGHT;
+					lenght_command <= Data_Input;
+				end
 				else
 					state <= START;		
 					
 			LENGHT: 
-				if(data_ready == 1'b1)
+				if(interrupt == 1'b1)
 					begin
 						state <= CMD;
-						lenght_command <= Data_Input;
+						instruction <= Data_Input;
 					end
 				else
 					state <= LENGHT;	
 					
 			CMD:
-				if(data_ready == 1'b1 && finish_count == 1'b1)
+				if(interrupt == 1'b1 && finish_count == 1'b1)
 					begin
-						state <= END;
-						instruction <= Data_Input;
+						state <= IDLE;
+						
 					end
-				else if(data_ready == 1'b1 && finish_count == 1'b0)
+				else if(interrupt == 1'b1 && finish_count == 1'b0)
 					begin
-						instruction <= Data_Input;
-						if(instruction == MATRIX_SIZE)
+					
+						if(instruction == MATRIX_SIZE)begin
 							state <= SIZE;
+							lenght_matrix <= Data_Input;
+						end
 						else if(instruction == RESEND_RESULT)
 							state <= SEND;
 						else if(instruction == INIT_CAPTURE)
 							state <= CAPTURE;
-						else if(instruction == DATA_CAPTURE && enable_capture_m == 1'b1)
+						else if(instruction == DATA_CAPTURE && flag_Matrix_Vector_b == 1'b0)
 							state <= MATRIX;
-						else if(instruction == DATA_CAPTURE && enable_capture_v == 1'b1)
+						else if(instruction == DATA_CAPTURE && flag_Matrix_Vector_b == 1'b1)
 							state <= VECTOR;
 						else 
 							state <= ERROR;
@@ -108,10 +110,9 @@ begin
 					state <= CMD;
 			
 			SIZE: 
-				if(data_ready == 1'b1 && finish_count == 1'b1)
+				if(interrupt == 1'b1 && finish_count == 1'b1)
 					begin
-						state <= END;
-						lenght_matrix <= Data_Input;
+						state <= IDLE;
 					end
 				else if(lenght_command != 4'd3)
 					state <= ERROR;
@@ -119,41 +120,43 @@ begin
 					state <= SIZE;	
 					
 			SEND:
-				if(data_ready == 1'b1 && finish_count == 1'b1)
-					state <= END;
+				if(interrupt == 1'b1 && finish_count == 1'b1)
+					state <= IDLE;
 				else if(lenght_command != 4'd1)
 					state <= ERROR;
 				else
 					state <= SEND;				
 			
 			CAPTURE:
-				if(data_ready == 1'b1 && finish_count == 1'b1)
-					state <= END;
+				if(interrupt == 1'b1 && finish_count == 1'b1)
+					state <= IDLE;
 				else if(lenght_command != 4'd2)
 					state <= ERROR;
 				else
 					state <= CAPTURE;	
 			
-			MATRIX: 
-				if(data_ready == 1'b1 && finish_count == 1'b1)
-					state <= END;
+			MATRIX: begin
+				flag_Matrix_Vector_b = 1'b1;
+				if(interrupt == 1'b1 && finish_count == 1'b1)
+					state <= IDLE;
 				else if(lenght_command != (lenght_matrix*lenght_matrix + 2))
 					state <= ERROR;
 				else
 					state <= MATRIX;	
-			
-			VECTOR:
-				if(data_ready == 1'b1 && finish_count == 1'b1)
-					state <= END;
+				end
+			VECTOR: begin
+				flag_Matrix_Vector_b = 1'b0;
+				if(interrupt == 1'b1 && finish_count == 1'b1)
+					state <= IDLE;
 				else if(lenght_command != (lenght_matrix + 2))
 					state <= ERROR;
 				else
 					state <= VECTOR;	
-			
+				end
 			END:
-				if(data_ready == 1'b1)
+				if(interrupt == 1'b1)
 					if(Data_Input == STOP_BYTE) 
-						state <= STOP;
+						state <= IDLE;
 					else
 						state <= ERROR;
 				else 
@@ -241,7 +244,7 @@ clear_vector_bit = 1'b0;
 			enable_size_bit = 1'b0;
 			send_result_bit = 1'b0;
 			enable_capture_v = 1'b0;
-			enable_capture_v = 1'b0;
+			enable_capture_m = 1'b0;
 			clear_vector_bit = 1'b0;
 		end
 		

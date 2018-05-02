@@ -4,7 +4,7 @@ module Receiver
 	input clk,
 	input reset,
 	input interrupt_bit,
-	input [WORD_LENGTH-1:0] ReceivedData_w,
+	input [WORD_LENGTH-1:0] Data_w,
 
 
 // Output Ports
@@ -16,7 +16,6 @@ module Receiver
 );
 
 bit finish_command_bit;
-bit command_lenght_bit;
 bit error_bit;
 //bit interrupt_bit;
 bit clearInterrupt_bit;
@@ -33,11 +32,12 @@ bit enable_vector_bit;
 bit clear_vector_bit;
 
 //wire [WORD_LENGTH-1:0] ReceivedData_w;
-wire [WORD_LENGTH-1:0] Data_w;
+//wire [WORD_LENGTH-1:0] Data_w;
 wire [WORD_LENGTH-1:0] Byte_w;
 wire [WORD_LENGTH-1:0] Matrix_length_w;
 wire [WORD_LENGTH-1:0] Data_FIFO;
 wire [(WORD_LENGTH*WORD_LENGTH)-1:0] Data_Vector_w;
+wire [WORD_LENGTH-1:0] command_lenght_wire;
 
 assign clearInterrupt = clearInterrupt_bit;
 /*
@@ -65,10 +65,10 @@ UART_RX Receive(
 );*/
 
 
-
+/*
 Error_RX Error(
 	.DataInput(ReceivedData_w),
-	.DataOutput(Byte_w),
+	.DataOutput(Data_w),
 	.error(error_bit)
 );
 
@@ -84,7 +84,7 @@ Data_RX Data
 	.clear_interrupt(clearInterrupt_bit),
 	.DataOutput(Data_w)
 );
-
+*/
 
 Load_M_V
 #(
@@ -97,7 +97,6 @@ load_M_V
 	.interrupt(interrupt_bit),
 	.data_ready(data_ready_bit),
 	.finish_count(finish_count_bit),
-	.full_Matrix(full_Matrix_bit),
 	.Data_Input(Data_w),
 	
 	.push(enable_push_bit),
@@ -109,7 +108,7 @@ load_M_V
 	.send_result(send_result_bit),
 	.clear_vector(clear_vector_bit),
 	.Matrix_length(Matrix_length_w),
-	.Command_lenght(command_lenght_bit)
+	.Command_lenght(command_lenght_wire)
 );
 
 Register_With_Clock_Enable
@@ -134,7 +133,7 @@ FIFOTA
 	.clk(clk), 
 	.reset(reset),
 	.pop(enable_pop_bit),
-	.push(enable_push_bit),
+	.push(enable_push_bit & interrupt_bit),
 	.Depth_of_FIFO(Matrix_length_w*Matrix_length_w),
 	.DataInput(Data_w),
 	.full(full_Matrix_bit),
@@ -150,7 +149,7 @@ Register_Vector
 (
 	.clk(clk), 
 	.reset(reset),
-	.enable(enable_vector_bit),
+	.enable(enable_vector_bit & interrupt_bit & ~finish_count_bit),
 	.Sync_Reset(clear_vector_bit),
 	.Data_Input(Data_w),
 	.Data_Output(Data_Vector_w)
@@ -164,9 +163,10 @@ counter_Lenght_Command
 (
 	.clk(clk), 
 	.reset(reset),
-	.enable(enable_counter_bit),
+	.enable(enable_counter_bit & interrupt_bit),
 	.Sync_Reset(reset_counter_bit),
-	.command_lenght(command_lenght_bit),
+	.CountOut(),
+	.command_lenght(command_lenght_wire),
 	.finish_count(finish_count_bit)
 );
 

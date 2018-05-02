@@ -18,15 +18,15 @@ logic  [(Word_Length*Word_Length)-1:0] Data_logic;
 
 always_ff@(posedge clk or negedge reset) begin
 	if(reset == 1'b0) 
-		Data_logic <= {Word_Length{1'b0}};
+		Data_logic <= {(Word_Length*Word_Length){1'b0}};
 	else
 		if(enable == 1'b1)
 			if(Sync_Reset == 1'b1)
-				Data_logic <= {Word_Length{1'b0}};
+				Data_logic <= {(Word_Length*Word_Length){1'b0}};
 			else 	
-				Data_logic <= {Data_logic[(Word_Length*Word_Length)-9:0], Data_Input};
-		else 
-			Data_logic <= {Word_Length{1'b0}};
+			//	Data_logic <= {Data_logic[(Word_Length*Word_Length)-1:8],Data_Input};
+				Data_logic <= {Data_Input,Data_logic[(Word_Length*Word_Length)-1:8]};
+//				Data_logic <= {Data_logic[(Word_Length*Word_Length)-9:0],Data_Input};
 end
 
 assign Data_Output = Data_logic;

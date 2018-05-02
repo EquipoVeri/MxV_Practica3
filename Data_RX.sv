@@ -13,7 +13,7 @@ module Data_RX (
 	output logic [7:0] DataOutput
 );
 
-enum logic [2:0] {IDLE, CLEAR_FLAG, DATA1, DATA2, ERROR} state;
+enum logic [2:0] {IDLE, CLEAR_FLAG, DATA1, DATA2, END, ERROR} state;
 logic [3:0] Data_byte_low;
 logic [3:0] Data_byte_high;
 
@@ -32,30 +32,33 @@ begin
 		case(state)
 		
 		IDLE:
-			if(interrupt == 1'b1 && error == 1'b0)
+			if(interrupt == 1'b1 && error == 1'b0)begin
 				state <= CLEAR_FLAG;
+				
+			end
 			else if(interrupt == 1'b1 && error == 1'b1)
 				state <= ERROR;
 			else 
 				state <= IDLE;
 	
-		CLEAR_FLAG:
+		CLEAR_FLAG: begin
 			state <= DATA1;
+			Data_byte_high <= DataInput [3:0];
+		end
 			
 		DATA1: 
-			begin
-				Data_byte_high <= DataInput [3:0];
-				state <= DATA2;
-			end	
+			state <= DATA2;	
 			
 		DATA2: 
-			if(interrupt == 1'b1)
-				begin
-					Data_byte_low <= DataInput [3:0];
-					state <= IDLE;
-				end
+			if(interrupt == 1'b1) begin
+				state <= END;
+				Data_byte_low <= DataInput [3:0];
+			end
 			else 
-				state <= DATA2;
+				state <= DATA2;		
+		
+		END:
+			state <= IDLE;
 		
 		ERROR:
 			if(interrupt == 1'b0) 
@@ -79,17 +82,21 @@ begin
 data_flag = 1'b0;
 clear_interrupt = 1'b0;
 	case(state)
-		CLEAR_FLAG:
-			clear_interrupt = 1'b1;
-		
+		/*CLEAR_FLAG:
+			clear_interrupt = 1'b1;*/
+			
 		DATA1:
 			clear_interrupt = 1'b1;
-
-		DATA2:
+		
+		DATA2: begin
+			clear_interrupt = 1'b0;
+			data_flag = 1'b1;
+		end
+		
+		END:
 			data_flag = 1'b1;
 
 		ERROR:begin
-			data_flag = 1'b0;
 			clear_interrupt = 1'b0;
 		end
 		

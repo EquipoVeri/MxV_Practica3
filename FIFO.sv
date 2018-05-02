@@ -11,7 +11,7 @@ module FIFO
 	input reset,
 	input pop,
 	input push,
-	input [NBITS_FOR_COUNTER-1:0] Depth_of_FIFO,
+	input [Word_Length-1:0] Depth_of_FIFO,
 	input [Word_Length-1:0] DataInput,
 	output full, empty,
 	output [Word_Length-1:0] DataOutput
@@ -81,4 +81,4 @@ Ram(
  /*--------------------------------------------------------------------*/
  /*--------------------------------------------------------------------*/
 
-endmodule
+endmodule 

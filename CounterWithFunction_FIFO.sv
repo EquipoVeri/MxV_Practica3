@@ -53,7 +53,7 @@ logic [NBITS_FOR_COUNTER-1 : 0] Count_elements;
 		end
 		else begin
 				if((enable_Push == 1'b1) && (MaxValue_Bit == 1'b0)) begin
-					if(Count_logic == MAXIMUM_VALUE-1)
+					if(Count_logic == MAXIMUM_VALUE)
 						Count_logic <= 0;
 					else begin
 						Count_logic <= Count_logic + 1'b1;
@@ -61,7 +61,7 @@ logic [NBITS_FOR_COUNTER-1 : 0] Count_elements;
 					end
 				end
 				if((enable_Pop == 1'b1) && (Zero_Bit == 1'b0)) begin
-					if(Count_read ==  MAXIMUM_VALUE - 1)
+					if(Count_read ==  MAXIMUM_VALUE)
 						Count_read <= 0;
 					else begin
 						Count_read <= Count_read + 1'b1;	
@@ -74,12 +74,12 @@ logic [NBITS_FOR_COUNTER-1 : 0] Count_elements;
 //--------------------------------------------------------------------------------------------
 
 always_comb begin
-	if(Count_elements == MAXIMUM_VALUE-1)
+	if(Count_elements == MAXIMUM_VALUE)
 		MaxValue_Bit = 1; 
 	else
 		MaxValue_Bit = 0;
 		
-	if ((Count_elements == 0) && (Count_read == 0))
+	if ((Count_elements == 0) && (Count_read == MAXIMUM_VALUE))
 		Zero_Bit = 1;
 	else
 		Zero_Bit = 0;
@@ -110,5 +110,4 @@ assign CountRead = Count_read;
 /*--------------------------------------------------------------------*/
  /*--------------------------------------------------------------------*/
  /*--------------------------------------------------------------------*/
-endmodule
-
+endmodule 

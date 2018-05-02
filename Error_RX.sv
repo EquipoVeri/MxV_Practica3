@@ -8,6 +8,8 @@ module Error_RX(
 
 enum logic [7:0] {ZERO = 8'h0, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE,
 						A, B, C, D, E, F} data;
+localparam INIT_BYTE = 8'hFE;
+localparam STOP_BYTE = 8'hEF;
 
 always_comb
 begin
@@ -45,6 +47,11 @@ begin
 			DataOutput = 8'hE;
 		F:
 			DataOutput = 8'hF;
+			
+		INIT_BYTE:
+			DataOutput = 8'hFE;
+		STOP_BYTE:	
+			DataOutput = 8'hEF;
 			
 		default: begin
 			DataOutput = 8'hFF;
