@@ -17,7 +17,7 @@
 module CounterWithFunction_FIFO
 #(
 	// Parameter Declarations
-	parameter NBITS_FOR_COUNTER = 5
+	parameter NBITS_FOR_COUNTER = 6
 )
 
 (
@@ -26,7 +26,7 @@ module CounterWithFunction_FIFO
 	input reset,
 	input enable_Push,
 	input enable_Pop,
-	input [31:0] MAXIMUM_VALUE,
+	input [7:0] MAXIMUM_VALUE,
 	
 	// Output Ports
 	output flag_empty,
@@ -79,7 +79,7 @@ always_comb begin
 	else
 		MaxValue_Bit = 0;
 		
-	if ((Count_elements == 0) && (Count_read == MAXIMUM_VALUE))
+	if ((Count_elements == 0) && (Count_read == 0))
 		Zero_Bit = 1;
 	else
 		Zero_Bit = 0;
@@ -110,5 +110,4 @@ assign CountRead = Count_read;
 /*--------------------------------------------------------------------*/
  /*--------------------------------------------------------------------*/
  /*--------------------------------------------------------------------*/
-endmodule
-
+endmodule 

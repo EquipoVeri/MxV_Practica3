@@ -4,14 +4,14 @@
 module FIFO 
 #(
 	parameter Word_Length = 16,
-	parameter NBITS_FOR_COUNTER = 5
+	parameter NBITS_FOR_COUNTER = 6
 )
 (
 	input clk, 
 	input reset,
 	input pop,
 	input push,
-	input [31:0] Depth_of_FIFO,
+	input [Word_Length-1:0] Depth_of_FIFO,
 	input [Word_Length-1:0] DataInput,
 	output full, empty,
 	output [Word_Length-1:0] DataOutput
