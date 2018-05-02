@@ -8,6 +8,7 @@ module FSM_MxV_Control
 	input EndOp,
 	input EndTxResults,
 	input Op,
+	input [7:0] matrix_length,
 	// Output Ports
 	output enable_counter,
 	output op_in_process,
@@ -15,10 +16,13 @@ module FSM_MxV_Control
 	output pop_2,
 	output pop_3,
 	output pop_4,
-	output transmit
+	output transmit,
+	output [7:0] data,
+	output tx_en,
+	output last_cmd
 );
 
-enum logic [3:0] {IDLE, LOAD_FIFOS1, LOAD_FIFOS_START, POP1, POP12, POP123, POP1234, TX_RESULT} state; 
+enum logic [3:0] {IDLE, LOAD_FIFOS1, LOAD_FIFOS_START, POP1, POP12, POP123, POP1234, SEND_FE, SEND_LENGTH, SEND_CMD, TX_RESULT, SEND_EF} state; 
 
 bit enable_counter_b;
 bit op_in_process_b;
@@ -27,6 +31,10 @@ bit pop2_b;
 bit pop3_b;
 bit pop4_b;
 bit transmit_b;
+bit tx_en_init_b;
+bit last_cmd_b;
+
+logic [7:0] data_w;
 
 /*------------------------------------------------------------------------------------------*/
 /*Asignacion de estado, proceso secuencial*/
@@ -72,16 +80,39 @@ always_ff@(posedge clk, negedge reset) begin
 				state <= POP123;
 				
 		POP1234:
-			if(EndOp == 1'b1)
-				state <= TX_RESULT;
+			if(EndOp == 1'b1) begin
+				state <= SEND_FE;
+				data_w = 8'hFE;
+			end
 			else
 				state <= POP1234;
+		
+		SEND_FE:
+		begin
+			state <= SEND_LENGTH;
+			data_w = matrix_length;
+		end
+		
+		SEND_LENGTH:
+		begin
+			state <= SEND_CMD;
+			data_w = 8'h04;
+		end
+		
+		SEND_CMD: begin
+			data_w = 8'hEF;
+			state <= TX_RESULT;
+		end
 			
 		TX_RESULT:	
-			if(EndTxResults == 1'b1)
-				state <= IDLE;
+			if(EndTxResults == 1'b1) begin
+				state <= SEND_EF;
+			end
 			else
 				state <= TX_RESULT;
+			
+		SEND_EF:	
+			state <= IDLE;
 				
 		default:
 			state <= IDLE;
@@ -101,6 +132,8 @@ always_comb begin
 				pop3_b = 1'b0;
 				pop4_b = 1'b0;
 				transmit_b = 1'b0;
+				tx_en_init_b = 1'b0;
+				last_cmd_b = 1'b0;
 			end
 		LOAD_FIFOS1: 
 			begin
@@ -111,6 +144,8 @@ always_comb begin
 				pop3_b = 1'b0;
 				pop4_b = 1'b0;
 				transmit_b = 1'b0;
+				tx_en_init_b = 1'b0;
+				last_cmd_b = 1'b0;
 			end
 		LOAD_FIFOS_START: 
 			begin
@@ -121,6 +156,8 @@ always_comb begin
 				pop3_b = 1'b0;
 				pop4_b = 1'b0;
 				transmit_b = 1'b0;
+				tx_en_init_b = 1'b0;
+				last_cmd_b = 1'b0;
 			end
 		POP1:
 			begin
@@ -131,6 +168,8 @@ always_comb begin
 				pop3_b = 1'b0;
 				pop4_b = 1'b0;
 				transmit_b = 1'b0;
+				tx_en_init_b = 1'b0;
+				last_cmd_b = 1'b0;
 			end
 		POP12:
 			begin
@@ -141,6 +180,8 @@ always_comb begin
 				pop3_b = 1'b0;
 				pop4_b = 1'b0;
 				transmit_b = 1'b0;
+				tx_en_init_b = 1'b0;
+				last_cmd_b = 1'b0;
 			end
 		POP123:
 			begin
@@ -151,6 +192,8 @@ always_comb begin
 				pop3_b = 1'b1;
 				pop4_b = 1'b0;
 				transmit_b = 1'b0;
+				tx_en_init_b = 1'b0;
+				last_cmd_b = 1'b0;
 			end
 		POP1234:
 			begin
@@ -161,6 +204,44 @@ always_comb begin
 				pop3_b = 1'b1;
 				pop4_b = 1'b1;
 				transmit_b = 1'b0;
+				tx_en_init_b = 1'b0;
+				last_cmd_b = 1'b0;
+			end
+		SEND_FE:
+			begin
+				enable_counter_b = 1'b0;
+				op_in_process_b = 1'b0;
+				pop1_b = 1'b0;
+				pop2_b = 1'b0;
+				pop3_b = 1'b0;
+				pop4_b = 1'b0;
+				transmit_b = 1'b0;
+				tx_en_init_b = 1'b1;
+				last_cmd_b = 1'b0;
+			end
+		SEND_LENGTH:
+			begin
+				enable_counter_b = 1'b0;
+				op_in_process_b = 1'b0;
+				pop1_b = 1'b0;
+				pop2_b = 1'b0;
+				pop3_b = 1'b0;
+				pop4_b = 1'b0;
+				transmit_b = 1'b0;
+				tx_en_init_b = 1'b1;
+				last_cmd_b = 1'b0;
+			end
+		SEND_CMD:
+			begin
+				enable_counter_b = 1'b0;
+				op_in_process_b = 1'b0;
+				pop1_b = 1'b0;
+				pop2_b = 1'b0;
+				pop3_b = 1'b0;
+				pop4_b = 1'b0;
+				transmit_b = 1'b0;
+				tx_en_init_b = 1'b1;
+				last_cmd_b = 1'b0;
 			end
 		TX_RESULT:
 			begin
@@ -171,9 +252,21 @@ always_comb begin
 				pop3_b = 1'b0;
 				pop4_b = 1'b0;
 				transmit_b = 1'b1;
+				tx_en_init_b = 1'b0;
+				last_cmd_b = 1'b0;
 			end
-
-		
+		SEND_EF:
+			begin
+				enable_counter_b = 1'b0;
+				op_in_process_b = 1'b0;
+				pop1_b = 1'b0;
+				pop2_b = 1'b0;
+				pop3_b = 1'b0;
+				pop4_b = 1'b0;
+				transmit_b = 1'b0;
+				tx_en_init_b = 1'b0;
+				last_cmd_b = 1'b1;
+			end
 	default: 		
 			begin
 				enable_counter_b = 1'b0;
@@ -183,6 +276,8 @@ always_comb begin
 				pop3_b = 1'b0;
 				pop4_b = 1'b0;
 				transmit_b = 1'b0;
+				tx_en_init_b = 1'b0;
+				last_cmd_b = 1'b0;
 			end
 
 	endcase
@@ -199,6 +294,10 @@ assign pop_3 = pop3_b;
 assign pop_4 = pop4_b;
 
 assign transmit = transmit_b;
+
+assign data = data_w;
+assign tx_en = tx_en_init_b;
+assign last_cmd = last_cmd_b;
 
 
 endmodule

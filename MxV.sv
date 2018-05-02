@@ -7,12 +7,13 @@ module MxV
 	input clk,
 	input reset,
 	input start,
-	input [63:0] vector,
+	input [(WORD_LENGTH*WORD_LENGTH)-1:0] vector,
 	input [WORD_LENGTH-1:0] FIFOvalue,
 	input FIFOpush,
-	input [31:0] Matrix_length,
+	input [WORD_LENGTH-1:0] Matrix_length,
 	output transmit,
-	output [WORD_LENGTH-1:0] results
+	output [WORD_LENGTH-1:0] results,
+	output txenable_init
 );
 
 
@@ -38,6 +39,7 @@ wire [WORD_LENGTH-1:0] dataoutFIFO2_w;
 wire [WORD_LENGTH-1:0] dataoutFIFO3_w;
 wire [WORD_LENGTH-1:0] dataoutFIFO4_w;
 wire [WORD_LENGTH-1:0] dataoutFIFOResult_w;
+wire [WORD_LENGTH-1:0] mux_results_w;
 
 wire [WORD_LENGTH-1:0] InputFIFOs_w;
 
@@ -58,6 +60,7 @@ wire [WORD_LENGTH-1:0] outputreg2_w;
 wire [WORD_LENGTH-1:0] outputreg3_w;
 wire [WORD_LENGTH-1:0] outputreg4_w;
 
+wire [WORD_LENGTH-1:0] data_w;
 
 bit enable_muxV_bit;
 bit enable_mux_feedback_bit;
@@ -68,10 +71,13 @@ bit endop_bit;
 bit op_bit;
 bit endresult_b;
 bit transmit_b;
+bit tx_en_b;
+bit last_cmd_b;
 
+assign results = mux_results_w;
+assign transmit = ((transmit_b | tx_en_b) | (last_cmd_b & ~endresult_b));
 
-assign results = dataoutFIFOResult_w;
-assign transmit = transmit_b & ~endresult_b;
+assign txenable_init = tx_en_b;
 
 
 //------------- CONTROL -------------------------------------------------//
@@ -102,6 +108,7 @@ FSM_MxV_Control controlMxV
 	.EndOp(endop_bit),
 	.EndTxResults(endresult_b),
 	.Op(op_bit),
+	.matrix_length(Matrix_length),
 	// Output Ports
 	.enable_counter(start_load_bit),
 	.op_in_process(enable_op_bit),
@@ -109,9 +116,25 @@ FSM_MxV_Control controlMxV
 	.pop_2(pop2_bit),
 	.pop_3(pop3_bit),
 	.pop_4(pop4_bit),
-	.transmit(transmit_b)
+	.transmit(transmit_b),
+	.data(data_w),
+	.tx_en(tx_en_b),
+	.last_cmd(last_cmd_b)
 );
 
+Multiplexer2to1
+#(
+	.NBits(WORD_LENGTH)
+)
+mux_result
+(
+	.Selector(tx_en_b | last_cmd_b | (~tx_en_b & endresult_b)),
+	.MUX_Data0(dataoutFIFOResult_w),
+	.MUX_Data1(data_w),
+	
+	.MUX_Output(mux_results_w)
+
+);
 
 //------------- LOAD FIFO -----------------------------------------------//
 

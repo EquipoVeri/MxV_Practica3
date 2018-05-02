@@ -10,13 +10,14 @@ module Load_M_V
 	
 // Output Ports
 	output push,
-	output pop,
 	output enable_counter,
 	output enable_size,
 	output reset_counter,
 	output enable_vector,
 	output send_result,
 	output clear_vector,
+	output clearInterrupt,
+	output enable_load,
 	output [Word_Length-1:0] Matrix_length,
 	output [Word_Length-1:0] Command_lenght
 );
@@ -33,7 +34,6 @@ logic [Word_Length-1:0] instruction;
 logic [Word_Length-1:0] lenght_matrix;
 
 bit push_bit;
-bit pop_bit;
 bit enable_counter_bit;
 bit reset_counter_bit;
 bit enable_vector_bit;
@@ -41,6 +41,9 @@ bit enable_capture_v;
 bit send_result_bit;
 bit enable_size_bit;
 bit clear_vector_bit;
+bit enable_load_bit;
+bit clearInterrupt_bit;
+
 
 bit flag_Matrix_Vector_b;
 /*------------------------------------------------------------------------------------------*/
@@ -146,7 +149,7 @@ begin
 			VECTOR: begin
 				flag_Matrix_Vector_b = 1'b0;
 				if(interrupt == 1'b1 && finish_count == 1'b1)
-					state <= IDLE;
+					state <= STOP;
 				else if(lenght_command != (lenght_matrix + 2))
 					state <= ERROR;
 				else
@@ -187,41 +190,57 @@ end
 always_comb 
 begin
 push_bit = 1'b0;
-pop_bit = 1'b0;
 enable_counter_bit = 1'b0;
 enable_vector_bit = 1'b0;
 reset_counter_bit = 1'b0;	
 enable_size_bit = 1'b0;
 send_result_bit = 1'b0;
 clear_vector_bit = 1'b0;
+clearInterrupt_bit = 1'b0;
+enable_load_bit = 1'b0; 
 	case(state)
-		LENGHT:
-			enable_counter_bit = 1'b1;
+		START:
+			clearInterrupt_bit = 1'b1; 
 		
-		CMD:
+		LENGHT:begin
 			enable_counter_bit = 1'b1;
+			clearInterrupt_bit = 1'b1;
+		end	
+		
+		CMD: begin
+			enable_counter_bit = 1'b1;
+			clearInterrupt_bit = 1'b1;
+		end
 		
 		SIZE:
 			enable_counter_bit = 1'b1;
 		
-		SEND:
+		SEND: begin
 			send_result_bit = 1'b1;
-					
+			clearInterrupt_bit = 1'b1;	
+		end
+		
 		MATRIX: begin
 			enable_counter_bit = 1'b1;
 			push_bit = 1'b1;
+			clearInterrupt_bit = 1'b1;
 		end
 		
 		VECTOR: begin
 			enable_counter_bit = 1'b1;
 			enable_vector_bit = 1'b1;
+			clearInterrupt_bit = 1'b1;
 		end
+		
+		STOP:
+			enable_load_bit = 1'b1;
+			
 		
 		ERROR: begin
 			reset_counter_bit = 1'b1;	
-			pop_bit = 1'b1;
 			enable_size_bit = 1'b0;
 			clear_vector_bit = 1'b1;
+			clearInterrupt_bit = 1'b0;
 		end
 		
 		END:
@@ -229,21 +248,21 @@ clear_vector_bit = 1'b0;
 				enable_size_bit = 1'b1;
 				
 		default begin
+			enable_load_bit = 1'b0;
 			push_bit = 1'b0;
-			pop_bit = 1'b0;
 			enable_counter_bit = 1'b0;
 			enable_vector_bit = 1'b0;
 			reset_counter_bit = 1'b0;	
 			enable_size_bit = 1'b0;
 			send_result_bit = 1'b0;
 			clear_vector_bit = 1'b0;
+			clearInterrupt_bit = 1'b0; 
 		end
 		
 	endcase
 end
 
 assign push = push_bit;
-assign pop = pop_bit;
 assign enable_counter = enable_counter_bit;
 assign enable_vector = enable_vector_bit;
 assign reset_counter = reset_counter_bit;
@@ -252,5 +271,7 @@ assign Matrix_length = lenght_matrix;
 assign Command_lenght = lenght_command;
 assign enable_size = enable_size_bit;
 assign clear_vector = clear_vector_bit;
+assign clearInterrupt = clearInterrupt_bit;
+assign enable_load = enable_load_bit;
 
 endmodule 
