@@ -6,7 +6,7 @@ module Error_RX(
 	output logic error
 );
 
-enum logic [4:0] {ZERO = 8'h0, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE,
+enum logic [7:0] {ZERO = 8'h0, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE,
 						A, B, C, D, E, F} data;
 
 always_comb
@@ -46,8 +46,10 @@ begin
 		F:
 			DataOutput = 8'hF;
 			
-		default:
+		default: begin
+			DataOutput = 8'hFF;
 			error 	  = 1'b1;
+		end
 	endcase
 end
 

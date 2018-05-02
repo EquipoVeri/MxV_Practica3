@@ -17,6 +17,9 @@ enum logic [2:0] {IDLE, CLEAR_FLAG, DATA1, DATA2, ERROR} state;
 logic [3:0] Data_byte_low;
 logic [3:0] Data_byte_high;
 
+/*------------------------------------------------------------------------------------------*/
+/*Asignacion de estado*/
+
 always_ff@(posedge clk, negedge reset)
 begin
 	if(reset == 1'b0) 
@@ -69,7 +72,8 @@ begin
 		endcase
 	end
 end
-
+/*------------------------------------------------------------------------------------------*/
+/*Salida de control, proceso combintorio*/
 always_comb 
 begin
 data_flag = 1'b0;
@@ -88,6 +92,12 @@ clear_interrupt = 1'b0;
 			data_flag = 1'b0;
 			clear_interrupt = 1'b0;
 		end
+		
+		default: begin
+			data_flag = 1'b0;
+			clear_interrupt = 1'b0;
+		end
+		
 	endcase
 end
 

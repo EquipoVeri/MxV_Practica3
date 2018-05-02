@@ -21,7 +21,7 @@ always_ff@(posedge clk or negedge reset) begin
 	else begin
 			if(enable == 1'b1) begin: Enable
 				if(Sync_Reset == 1'b1)
-					Count_logic <= {Word_Length{1'b0}};
+					Count_logic <= {WORD_LENGTH{1'b0}};
 				else 	begin: SynchronousReset	
 					if(Count_logic == command_lenght - 1)
 						Count_logic <= 0;

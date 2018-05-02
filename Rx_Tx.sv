@@ -10,7 +10,7 @@ module Rx_Tx(
 	 output SerialOutputTx,
 	 output [7:0] ReceivedData
 );
-
+/*
 wire RxInterrupt_w;
 wire [7:0] ReceivedData_w;
 
@@ -45,4 +45,6 @@ Recieve
 	output [8*Word_Length-1:0] Vector,
 	output [WORD_LENGTH-1:0] Matrix_length
 
-);
+);*/
+
+endmodule 
