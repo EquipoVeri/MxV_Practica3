@@ -20,6 +20,7 @@ bit flag_transmit_b;
 bit serialout_b;
 bit enable_tx_b;
 bit enable_uarttx_b;
+bit tx_enable_init_b;
 
 assign SerialOutputTx = serialout_b;
 
@@ -55,7 +56,8 @@ Matrix_Vector
 	.Matrix_length(Matrix_length),
 	// output ports
 	.transmit(transmitMxV_b),
-	.results(data_result_w)
+	.results(data_result_w),
+	.txenable_init(tx_enable_init_b)
 );
 
 ClockDivider
@@ -78,7 +80,7 @@ CounterWithFunction_Result counter_res
 	// Input Ports
 	.clk(clk),
 	.reset(reset),
-	.enable(transmitMxV_b),
+	.enable(transmitMxV_b | tx_enable_init_b),
 	
 	// Output Ports
 	.flag(flag_transmit_b)
