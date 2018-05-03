@@ -15,7 +15,7 @@ module CounterWithFunction_With_Sync_Reset
 logic [WORD_LENGTH-1 : 0] Count_logic;
 bit MaxValue_Bit;
 
-always_ff@(posedge clk or negedge reset) begin
+always_ff@(posedge enable or negedge reset) begin
 	if (reset == 1'b0)
 		Count_logic <= {WORD_LENGTH{1'b0}};
 	else begin
@@ -35,7 +35,7 @@ end
 //--------------------------------------------------------------------------------------------
 
 always_comb begin
-	if(Count_logic == command_lenght-1)
+	if(Count_logic == command_lenght-2)
 		MaxValue_Bit = 1'b1; 
 	else
 		MaxValue_Bit = 1'b0;

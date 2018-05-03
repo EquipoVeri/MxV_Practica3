@@ -18,7 +18,7 @@ wire RX_interrupt_enable_w;
 bit clk_uart_b;
 bit transmit_b;
 
-assign RxInterrupt = RxInterrupt_w;
+assign RxInterrupt = RX_interrupt_enable_w;
 assign ParityError = par_w;
 assign ReceivedData = Q_w;
 	 

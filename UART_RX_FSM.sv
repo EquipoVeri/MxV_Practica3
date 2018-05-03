@@ -98,7 +98,7 @@ always_comb begin
 			begin
 				enable_half_w = 1'b0;
 				enable_max_w = 1'b0;
-				dataReceived_bit = 1'b0;
+				dataReceived_bit = 1'b1;
 			end
 		START:
 			begin
@@ -164,7 +164,7 @@ always_comb begin
 			begin
 				enable_half_w = 1'b0;
 				enable_max_w = 1'b1;
-				dataReceived_bit = 1'b1;
+				dataReceived_bit = 1'b0;
 			end
 		default: 
 			begin

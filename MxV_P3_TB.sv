@@ -97,7 +97,7 @@ initial begin
 	#868 SerialDataRx = 1;//paridad
 	#868 SerialDataRx = 1; //stop
 	
-	/*FE*/
+	/*EF*/
 	#1000 SerialDataRx = 0; //start
 	#868 SerialDataRx = 1;  
 	#868 SerialDataRx = 1; 
@@ -110,19 +110,318 @@ initial begin
 	#868 SerialDataRx = 1;//paridad
 	#868 SerialDataRx = 1; //stop
 	
-	/*
-	#800 SerialDataRx = 0; //start
+	/*FE*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 0;  
+	#868 SerialDataRx = 1; 
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+		/*02*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 0;  
+	#868 SerialDataRx = 1; 
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*03*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 1;  
+	#868 SerialDataRx = 1; 
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*EF*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 1;  
+	#868 SerialDataRx = 1; 
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*FE*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 0;  
+	#868 SerialDataRx = 1; 
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*0B*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 1;  
+	#868 SerialDataRx = 1; 
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*04*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 0;  
+	#868 SerialDataRx = 0; 
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*00*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 0;  
+	#868 SerialDataRx = 0; 
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*01*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 1;  
+	#868 SerialDataRx = 0; 
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*02*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 0;  
+	#868 SerialDataRx = 1; 
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*03*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 1;  
+	#868 SerialDataRx = 1; 
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*04*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 0;  
+	#868 SerialDataRx = 0; 
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*05*/
+	#1000 SerialDataRx = 0; //start
 	#868 SerialDataRx = 1;  
 	#868 SerialDataRx = 0; 
 	#868 SerialDataRx = 1;
 	#868 SerialDataRx = 0;
-	#868 SerialDataRx = 1;
 	#868 SerialDataRx = 0;
-	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
 	#868 SerialDataRx = 0;
 	#868 SerialDataRx = 1;//paridad
 	#868 SerialDataRx = 1; //stop
-	*/
+	
+	/*06*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 0;  
+	#868 SerialDataRx = 1; 
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*07*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 1;  
+	#868 SerialDataRx = 1; 
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*08*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 0;  
+	#868 SerialDataRx = 0; 
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*EF*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 1;  
+	#868 SerialDataRx = 1; 
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*FE*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 0;  
+	#868 SerialDataRx = 1; 
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*05*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 1;  
+	#868 SerialDataRx = 0; 
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*04*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 0;  
+	#868 SerialDataRx = 0; 
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*00*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 0;  
+	#868 SerialDataRx = 0; 
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*01*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 1;  
+	#868 SerialDataRx = 0; 
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
+	/*02*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 0;  
+	#868 SerialDataRx = 1; 
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop	
+	
+	/*EF*/
+	#1000 SerialDataRx = 0; //start
+	#868 SerialDataRx = 1;  
+	#868 SerialDataRx = 1; 
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 0;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;
+	#868 SerialDataRx = 1;//paridad
+	#868 SerialDataRx = 1; //stop
+	
 end
 
 /*********************************************************/

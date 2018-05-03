@@ -16,7 +16,7 @@ module Shift_register
 	
 logic  [(Word_Length*Word_Length)-1:0] Data_logic;
 
-always_ff@(posedge clk or negedge reset) begin
+always_ff@(posedge enable or negedge reset) begin
 	if(reset == 1'b0) 
 		Data_logic <= {(Word_Length*Word_Length){1'b0}};
 	else
