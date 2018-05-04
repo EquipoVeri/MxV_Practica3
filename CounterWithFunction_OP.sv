@@ -10,7 +10,7 @@ module CounterWithFunction_OP
 	input reset,
 	input enable,
 	input [7:0] matrixSize_real,
-	input [7:0] matrixSize,
+	input [31:0] matrixSize,
 	
 	// Output Ports
 	output op_in_process,

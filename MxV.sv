@@ -9,7 +9,6 @@ module MxV
 	input start,
 	input [(WORD_LENGTH*WORD_LENGTH)-1:0] vector,
 	input [WORD_LENGTH-1:0] FIFOvalue,
-	input FIFOpush,
 	input [WORD_LENGTH-1:0] Matrix_length,
 	output transmit,
 	output [WORD_LENGTH-1:0] results,

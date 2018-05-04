@@ -22,6 +22,8 @@ bit clearInterrupt_bit;
 bit enable_load_bit;
 bit empty_bit;
 bit pop_bit;
+bit pop_register_bit;
+bit start_bit;
 
 assign SerialOutputTx = serialout_b;
 
@@ -53,23 +55,25 @@ Receiver
 RX
 (
 	.clk(clk),
+	.clk_MxV(clk_MxV),
 	.reset(reset),
 	.interrupt(interrupt_bit),
-	.pop(pop_bit),
+	.pop(pop_register_bit),
 	.Data_w(ReceivedData_w),
 	.clearInterrupt(clearInterrupt_bit),
 	.enable_load(enable_load_bit),
 	.empty(empty_bit),
+	.start(start_bit),
 	.DataOutput(DataFIFOTA),
 	.Data_Vector(vector),
 	.Matrix_length(Matrix_length)
 );
 
-debouncer shot(
+One_Shot shot_start(
 	.clk(clk_MxV),
-	.rst(reset),
-	.sw(enable_load_bit),
-	.one_shot(start_b)
+	.reset(reset),
+	.Start(start_bit),
+	.Shot(start_b)
 );
 
 Control_Pop
@@ -84,10 +88,36 @@ Control_Pop
 	.empty(empty_bit),
 	.FIFOTAvalue(DataFIFOTA),
 	.Matrix_length(Matrix_length),
-	.pop(pop_bit),
+	.pop(pop_register_bit),
 	.FIFOvalue(DataFIFO)
 );
+/*
+One_Shot shot_push (
+	.clk(clk),
+	.reset(reset),
+	.Start(push_Mv & clk_MxV),
+	.Shot(push_Mv_reg)
+);
 
+One_Shot shot_Pop(
+	.clk(clk),
+	.reset(reset),
+	.Start(pop_bit & clk_MxV),
+	.Shot(pop_register_bit)
+);
+
+Register
+#(
+	.Word_Length(1)
+)
+Register_Pop
+(
+	.clk(clk),
+	.reset(reset),
+	.Data_Input(pop_bit),
+	.Data_Output(pop_register_bit)
+);
+*/
 MxV
 #(
 	.WORD_LENGTH(WORD_LENGTH)
@@ -100,7 +130,6 @@ Matrix_Vector
 	.start(start_b),
 	.vector(vector),
 	.FIFOvalue(DataFIFO),
-	.FIFOpush(),
 	.Matrix_length(Matrix_length),
 	// output ports
 	.transmit(transmitMxV_b),
