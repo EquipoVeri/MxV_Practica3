@@ -7,10 +7,9 @@ module MxV
 	input clk,
 	input reset,
 	input start,
-	input [63:0] vector,
+	input [(WORD_LENGTH*WORD_LENGTH)-1:0] vector,
 	input [WORD_LENGTH-1:0] FIFOvalue,
-	input FIFOpush,
-	input [31:0] Matrix_length,
+	input [WORD_LENGTH-1:0] Matrix_length,
 	output transmit,
 	output [WORD_LENGTH-1:0] results,
 	output txenable_init

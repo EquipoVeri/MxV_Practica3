@@ -9,7 +9,7 @@ module CounterWithFunction_M_V
 	input clk,
 	input reset,
 	input enable,
-	input [31:0] matrixSize,
+	input [7:0] matrixSize,
 	
 	// Output Ports
 	output push1, push2, push3, push4,

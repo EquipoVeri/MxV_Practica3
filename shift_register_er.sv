@@ -18,7 +18,7 @@ always_ff @(negedge reset, posedge clk)
 			q <= 0;
 		else
 			if (enable)
-				q <= {q[WORD_LENGTH-2:0], d};
+				q <= {d,q[WORD_LENGTH-1:1]};
 	end
 
 //assign q = q_w;

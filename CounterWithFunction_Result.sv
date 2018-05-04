@@ -1,8 +1,8 @@
 module CounterWithFunction_Result
 #(
 	// Parameter Declarations
-	parameter MAXIMUM_VALUE = 10000,
-	parameter HALF_VALUE = 5000,
+	parameter MAXIMUM_VALUE = 100000,
+	parameter HALF_VALUE = 50000,
 	parameter NBITS_FOR_COUNTER = CeilLog2(MAXIMUM_VALUE)
 )
 

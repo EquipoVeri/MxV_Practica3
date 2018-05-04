@@ -33,7 +33,7 @@ DUV
 /*********************************************************/
 initial // Clock generator
   begin
-    forever #1 clk = !clk;
+    forever #2 clk = !clk;
   end
 /*********************************************************/
 initial begin // reset generator
